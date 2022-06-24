@@ -7,7 +7,8 @@ use App\Router;
 use App\Controllers\ContactController;
 use App\Controllers\BankController;
 use App\Controllers\CustomerController;
-use App\Controllers\AccountController; 
+use App\Controllers\AccountController;
+use App\Controllers\TransactionController;
 use App\Models\Banks;
 use App\Models\Customer;
 
@@ -31,6 +32,7 @@ $router->get('/logout', BankController::class . '::logout');
 
 $router->get('/customer', AccountController::class . '::index');
 $router->post('/customer', AccountController::class . '::store');
+$router->post('/customer', TransactionController::class . '::transaction');
 
 $router->get('/login', CustomerController::class . '::loginDisplay');
 $router->post('/login', CustomerController::class . '::login');

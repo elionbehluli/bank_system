@@ -2,6 +2,7 @@
 
 namespace App\Models;
 use system\Model;
+use PDOException;
 
 class Banks extends Model
 {
