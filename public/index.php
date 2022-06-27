@@ -33,6 +33,7 @@ $router->get('/logout', BankController::class . '::logout');
 $router->get('/customer', AccountController::class . '::index');
 $router->post('/customer', AccountController::class . '::store');
 $router->post('/customer', TransactionController::class . '::transaction');
+// $router->post('/customer', TransactionController::class . '::showHideForm');
 
 $router->get('/login', CustomerController::class . '::loginDisplay');
 $router->post('/login', CustomerController::class . '::login');

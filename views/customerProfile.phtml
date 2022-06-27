@@ -5,7 +5,7 @@
 
 <?php
 
-if(!isset($_SESSION['name']) && !isset($_SESSION['password']))
+if(!isset($_SESSION['email']))
 {
     header("location: login");
 }
@@ -19,14 +19,12 @@ $account = new Account();
 
 $stmt = $account->conn->query($sql);
 
-$users = [];    
+$accounts = [];    
 
 while($row = $stmt->fetch())
 {
-    $users[] = $row;
+    $accounts[] = $row;
 }
-
-
 
 $tra = "SELECT atm_transactions.* FROM `atm_transactions`";
 
@@ -41,8 +39,26 @@ while($trans = $tran->fetch())
     $transactions[] = $trans;
 }
 
+$hide = "";
+
+// var_dump($_POST['show']);
+
+// die();
+
+// if($_POST['show']) {
+
+    
+
+// }
+
 ?>
 
+<style>
+    .hide{
+        display: none;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <div class="table-responsive">
 
     <table class="table table-responsive">
@@ -53,13 +69,16 @@ while($trans = $tran->fetch())
             <th>description</th>
         </tr>
 
-        <?php foreach($users as $user): ?>
+        <?php foreach($accounts as $account): ?>
 
             <tr>
-                    <td><?= $user['id'] ?></td>
-                    <td><?= $user['balance'] ?></td>
-                    <td><?= $user['account_type'] ?></td>
-                    <td><?= $user['description'] ?></td>
+                    <td><?= $account['id'] ?></td>
+                    <td><?= $account['balance'] ?></td>
+                    <td><?= $account['account_type'] ?></td>
+                    <td><?= $account['description'] ?></td>
+                    <td>
+                    <input type="submit" data-accountNumberBtn="<?php echo $account['id'] ?>" onclick="accountNumber($(this))" name="show" value="Transact">
+                    </td>
             </tr>
 
         <?php endforeach ?>
@@ -70,7 +89,7 @@ while($trans = $tran->fetch())
                     <td>balance</td>
                     <td><input type="text" name="account_type"></td>
                     <td><input type="text" name="description"></td>
-                    <td><input type="submit" name="submit"></td>  
+                    <td><input type="submit" name="submit"></td>
                 </tr>
             </form>
             
@@ -78,10 +97,16 @@ while($trans = $tran->fetch())
 
 </div>
 
-<form action="/customer" method="POST">
+<form action="/customer" method="POST" class="<?php echo $hide; ?>">
 
+    <input type="hidden" id="accountNumberForTransact" value="" name="acc">
+
+    <label for="">Account you want to transact: </label>
     <input type="text" name="account_id">
+
+    <label for="">Ammount of money you want to send(in cent): </label>
     <input type="number" name="amount_of_money">
+
     <input type="submit" name="transact">
 
 </form>
@@ -110,3 +135,14 @@ while($trans = $tran->fetch())
 </div>
 
 <a href="logout">Logout</a>
+
+<script>
+    
+    const accountNumber = (event) => {
+
+        const accountNumber = event.attr('data-accountNumberBtn');
+        $('#accountNumberForTransact').val(accountNumber);
+
+    }
+
+</script>

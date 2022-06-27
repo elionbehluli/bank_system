@@ -19,32 +19,47 @@ class CustomerController
 
             $customer = new Customer();
 
-            $name = $_POST['name'];
+            $email = $_POST['email'];
 
             $password = $_POST['password'];
-            
-            $sql  = "SELECT * FROM `customers` where `name` ='{$name}' and `password` = '{$password}' ";
 
-            $stmt = $customer->conn->query($sql);
+            $user = "SELECT * FROM customers where `email` = :email";
 
-            $user = $stmt->fetch();
+            $stmt = $customer->conn->prepare($user);
 
-            if(!$user){
+            $stmt->bindValue(':email', $email);
+
+            $stmt->execute();
+
+            $result = $stmt->fetch();
+
+            if(!$stmt) {
+
+                echo "User does not exists in database!";
+                die();
                 
-                header("location: login");
+            } else {
 
-            }
+                if(!password_verify($password, $result['password'])) {
+
+                    echo "Email or password incorrect!";
+                    die();
+
+                } else {
                     
-            session_start();
+                    session_start();
 
-            $_SESSION['id'] = $user['id'];
-            $_SESSION['name'] = $name;
-            $_SESSION['password'] = $password;
+                    $_SESSION['id'] = $result['id'];
+                    $_SESSION['email'] = $result['email'];
 
-            header("location: customer");
+                    header("location: customer");
 
-            exit();
+                    exit();
 
+                }
+
+            }       
+            
         }
 
     }
