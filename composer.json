@@ -6,5 +6,9 @@
             "App\\": "src/",
             "system\\": "system/"
         }
+    },
+    "require": {
+        "monolog/monolog": "^2.7",
+        "swiftmailer/swiftmailer": "^6.3"
     }
 }
