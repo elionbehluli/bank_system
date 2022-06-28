@@ -49,7 +49,7 @@ CREATE TABLE atms (
 
 CREATE TABLE accounts (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `balance` BIGINT(10),
+    `balance` BIGINT(100),
     `account_type` VARCHAR(20),
     `description` VARCHAR(90),
     `bank_id` INT,
@@ -62,12 +62,13 @@ CREATE TABLE accounts (
 
 CREATE TABLE atm_transactions (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `date` DATE,
+    `from_account_id` INT,
+    `to_account_id` INT,
+    `balance` BIGINT(100),    
     `type` VARCHAR(20),
-    `amount` FLOAT(50),
-    `balance` FLOAT(50),
-    `account_id` INT,
     PRIMARY KEY (`id`),
+    `date` DATE,
 
-    CONSTRAINT FK_TransactionAccountId FOREIGN KEY (`account_id`) REFERENCES accounts(`id`)
+    CONSTRAINT FK_FromTransactionAccountId FOREIGN KEY (`from_account_id`) REFERENCES accounts(`id`),
+    CONSTRAINT FK_ToTransactionAccountId FOREIGN KEY (`to_account_id`) REFERENCES accounts(`id`)
 );

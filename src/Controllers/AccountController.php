@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use system\Model;
 
+require __DIR__ . '/../../helper/general_helper.php';
+
 session_start();
 
 class AccountController
@@ -17,7 +19,7 @@ class AccountController
     public function store()
     {
         
-        if($_POST['submit']) {
+        if(isset($_POST['submit'])) {
             
             $id = rand(100000000,999999999);
             $balance = '0';
@@ -26,6 +28,17 @@ class AccountController
             $customer_id = $_SESSION['id'];
             
             $model = new Model();
+
+            $account_types = ["debit", "credit", "master", "visa"];
+
+            if (!in_array($account_type, $account_types)) {
+                appLogger('Typed incorrect type of account', 'accounts/accounts.log');
+                die;
+            } 
+
+            if (!is_string($description)) {
+                die;
+            }
         
             $conn = $model->databaseConnection;
         
