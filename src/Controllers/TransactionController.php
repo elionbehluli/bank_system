@@ -6,8 +6,11 @@ namespace App\Controllers;
 use PDOException;
 use system\Model;
 use App\Models\Transacions;
+use system\SmtpClass;
 
 require __DIR__ . '/../../helper/general_helper.php';
+
+
 
 session_start();
 
@@ -20,6 +23,10 @@ class TransactionController
         $model = new Model();
 
         $conn = $model->databaseConnection;
+
+        $smtp = new SmtpClass();
+
+        $mail = $smtp->mailConn;
         
         if(isset($_REQUEST['transact']))
         {
@@ -71,11 +78,33 @@ class TransactionController
     
                 $conn->query("UPDATE `accounts` SET `accounts`.`balance` = `accounts`.`balance` + '$balanceDifference' WHERE `accounts`.`id` = '$accToTransfer'");
 
-                $conn->query("INSERT INTO `atm_transactions` (date, balance, from_account_id, to_account_id) VALUES ('$date', '$balanceDifference', '$acc', '$accToTransfer')");
+                $conn->query("INSERT INTO `atm_transactions` (balance, from_account_id, to_account_id, `date`) VALUES ('$balanceDifference', '$acc', '$accToTransfer', '$date')");
+                
+                
+                $mail->isHTML(true);
+
+                $mail->addAddress("elionbehluli7@gmail.com", "elion-behluli");
+                
+                $mail->setFrom("veqpertest4@gmail.com", "bardh-korca");
+
+                $mail->Subject = "TEST";
+
+                $mail->msgHTML("test");
+
+                if(!$mail->send()) {
+
+                    die("email not send");
+
+                }
+                else{
+
+                    echo "email sent successfuly";
+
+                }
 
                 $conn->commit();
 
-                appLogger('Transaction from ' . $acc . ' to ' . $accToTransfer . ' sending ' . $balanceDifference . ' cent completed succesfuly', 'transactions/transactions.log');
+                appLogger('Transaction from ' . $acc . ' to ' . $accToTransfer . ' sending ' . $balanceDifference . ' cent completed succesfuly', 'transactions/');
 
                 header("location: customer");
         
@@ -87,6 +116,7 @@ class TransactionController
                 appLogger('Transaction from ' . $acc . ' to ' . $accToTransfer . ' sending ' . $balanceDifference . ' cent failed!', 'transactions/transactions.log');
 
                 die($e->getMessage());
+
             }
 
         }

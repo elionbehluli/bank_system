@@ -1,58 +1,39 @@
-<?php 
-// session_start();
-?>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-
 <?php
+
+use App\Models\Account;
+use App\Models\Transactions;
+
 
 if(!isset($_SESSION['email']))
 {
     header("location: login");
 }
   
-use App\Models\Account;
-use App\Models\Transactions;
+$accountsQuery = "SELECT accounts.* FROM `accounts` where accounts.customer_id = ". $_SESSION['id'];
 
-$sql = "SELECT accounts.* FROM `accounts` where accounts.customer_id = ". $_SESSION['id'];
+$accountModel = new Account();
 
-$account = new Account();
+$accountsResult = $accountModel
+    ->conn
+    ->query($accountsQuery)
+    ->fetchAll();
 
-$stmt = $account->conn->query($sql);
+$transactionsQuery = "SELECT DISTINCT atr.* FROM atm_transactions atr JOIN accounts acc ON acc.`id` =  atr.`from_account_id` and acc.`customer_id` = '{$_SESSION['id']}' or acc.`id` =  atr.`to_account_id` and acc.`customer_id` = '{$_SESSION['id']}'";
 
-$accounts = [];    
-
-while($row = $stmt->fetch())
-{
-    $accounts[] = $row;
-}
-
-// $tra = "SELECT atr.* FROM atm_transactions atr, accounts acc WHERE atr.`account_id` =  acc.`id` and acc.`customer_id` = '{$_SESSION['id']}'";
-
-$tra = "SELECT atr.* FROM atm_transactions atr JOIN accounts acc ON acc.`id` =  atr.`from_account_id` and acc.`customer_id` = '{$_SESSION['id']}' or acc.`id` =  atr.`to_account_id` and acc.`customer_id` = '{$_SESSION['id']}'";
-
-$transaction = new Transactions();
-
-$tran = $transaction->conn->query($tra);
-
-$transactions = [];
-
-while($trans = $tran->fetch())
-{
-    $transactions[] = $trans;
-}
-
-$hide = "";
+$transactionModel = new Transactions();
+$transactionsResult = $transactionModel
+        ->conn
+        ->query($transactionsQuery)
+        ->fetchAll();
 
 ?>
 
-<style>
-    .hide{
-        display: none;
-    }
-</style>
+<head>
+    <title>Bank</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-
+<body>
 <div class="table-responsive">
 
     <table class="table table-responsive">
@@ -63,7 +44,7 @@ $hide = "";
             <th>description</th>
         </tr>
 
-        <?php foreach($accounts as $account): ?>
+        <?php foreach($accountsResult as $account): ?>
 
             <tr>
                     <td><?= $account['id'] ?></td>
@@ -113,15 +94,17 @@ $hide = "";
             <th>balance</th>
             <th>From</th>
             <th>To</th>
+            <th>Created at</th>
         </tr>
 
-        <?php foreach($transactions as $transaction): ?>
+        <?php foreach($transactionsResult as $transaction): ?>
 
             <tr>
                     <td><?= $transaction['id'] ?></td>
                     <td><?= $transaction['balance'] ?></td>
                     <td><?= $transaction['from_account_id'] ?></td>
                     <td><?= $transaction['to_account_id'] ?></td>
+                    <td><?= $transaction['date'] ?></td>
             </tr>
 
         <?php endforeach ?>
@@ -131,7 +114,8 @@ $hide = "";
 </div>
 
 <a href="logout">Logout</a>
-
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
     
     const accountNumber = (event) => {

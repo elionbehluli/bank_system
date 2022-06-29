@@ -29,9 +29,14 @@ class AccountController
             
             $model = new Model();
 
+            $errors = [];
+
             $account_types = ["debit", "credit", "master", "visa"];
 
             if (!in_array($account_type, $account_types)) {
+
+                $errors[] = 'Incorrect type of account';
+
                 appLogger('Typed incorrect type of account', 'accounts/accounts.log');
                 die;
             } 
@@ -40,13 +45,22 @@ class AccountController
                 die;
             }
         
+
+            if(count($errors) !== 0) {
+                $_SESSION['error'] = 'tewtwetwet';
+                header("location: customer");
+                die;
+            }
+
             $conn = $model->databaseConnection;
         
             $insert = $conn->prepare("INSERT INTO `accounts` (id, balance, account_type, description, customer_id)
                         VALUES ('$id', '$balance', '$account_type', '$description', '$customer_id')");
         
-            $insert->execute();
-        
+            if($insert->execute()) {
+                appLogger('Account ' . $id . ' inserted succesfuly', 'accounts/accounts.log');
+            }
+            
             header("location: customer");
         }
 

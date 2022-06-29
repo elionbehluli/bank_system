@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '8e362f9783fd4d25d434424fab21199c44155a51',
+        'reference' => '405fd4cf25b8fbe0086c22a327bd67514f77b030',
         'name' => 'gmaccario/simple-mvc-php-framework',
         'dev' => true,
     ),
@@ -34,7 +34,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '8e362f9783fd4d25d434424fab21199c44155a51',
+            'reference' => '405fd4cf25b8fbe0086c22a327bd67514f77b030',
             'dev_requirement' => false,
         ),
         'monolog/monolog' => array(
@@ -44,6 +44,15 @@
             'install_path' => __DIR__ . '/../monolog/monolog',
             'aliases' => array(),
             'reference' => '5579edf28aee1190a798bfa5be8bc16c563bd524',
+            'dev_requirement' => false,
+        ),
+        'phpmailer/phpmailer' => array(
+            'pretty_version' => 'v6.6.3',
+            'version' => '6.6.3.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpmailer/phpmailer',
+            'aliases' => array(),
+            'reference' => '9400f305a898f194caff5521f64e5dfa926626f3',
             'dev_requirement' => false,
         ),
         'psr/log' => array(
