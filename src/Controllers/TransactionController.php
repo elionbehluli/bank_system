@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controllers;
-
+    
 
 use PDOException;
 use system\Model;
@@ -43,6 +43,13 @@ class TransactionController
             $accDb = $conn->query("SELECT `id` FROM accounts WHERE `accounts`.`id` = '$acc'")->fetch();
 
             $accToTransferDb = $conn->query("SELECT `id` FROM accounts WHERE `accounts`.`id` = '$accToTransfer'")->fetch();
+
+            $accToSendEmail = $conn->query("SELECT `customer_id` FROM accounts WHERE `accounts`.`id` = '$accToTransfer'")->fetch();
+
+            $emailToSend = $conn->query("SELECT `cs`.`email` FROM customers cs WHERE cs.`id` = '$accToSendEmail[0]'")->fetch();
+
+            // var_dump($emailToSend[0]);
+            // die;
             
             if(!$accDb) {
                 appLogger('Transaction from ' . $acc . ' failed because ' . $acc . ' doestn exists!', 'transactions/transactions.log');
@@ -80,20 +87,19 @@ class TransactionController
 
                 $conn->query("INSERT INTO `atm_transactions` (balance, from_account_id, to_account_id, `date`) VALUES ('$balanceDifference', '$acc', '$accToTransfer', '$date')");
                 
-                
                 $mail->isHTML(true);
-
-                $mail->addAddress("elionbehluli7@gmail.com", "elion-behluli");
                 
-                $mail->setFrom("veqpertest4@gmail.com", "bardh-korca");
+                $mail->setFrom("elion.behluli@spinpagency.com", "elion-behluli");
 
-                $mail->Subject = "TEST";
+                $mail->addAddress($emailToSend[0]);
 
-                $mail->msgHTML("test");
+                $mail->Subject = "Transaction";
+
+                $mail->msgHTML($balanceDifference . "cent are transacted from " . $acc . "to your account " . $accToTransfer);
 
                 if(!$mail->send()) {
-
-                    die("email not send");
+                    // echo 'Mailer Error: ' . $mail->ErrorInfo;
+                    echo 'email not send ' . $mail->ErrorInfo;
 
                 }
                 else{

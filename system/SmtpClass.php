@@ -25,11 +25,11 @@ class SmtpClass
     
         $mail->SMTPDebug  = 1;  
         $mail->SMTPAuth   = TRUE;
-        $mail->SMTPSecure = "tls";
-        $mail->Port       = 8888;
-        $mail->Host       = "localhost";
-        $mail->Username   = "veqpertest4@gmail.com";
-        $mail->Password   = "veqpertest123";
+        $mail->SMTPSecure = "ssl";
+        $mail->Port       = 465;
+        $mail->Host       = "ssl://mail.spinpagency.com";
+        $mail->Username   = "elion.behluli@spinpagency.com";
+        $mail->Password   = "";
 
         $this->mailConn = $mail;
 
